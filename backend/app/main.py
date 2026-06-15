@@ -5,6 +5,11 @@ from pydantic import BaseModel
 from fastapi import FastAPI, UploadFile, File
 from app.services.resume_service import extract_skills
 from app.services.resume_analysis_service import analyze_resume
+from app.services.mock_interview_service import (
+    start_mock_interview,
+    continue_interview,
+    end_interview_with_feedback
+)
 from app.services.roadmap_service import (
     generate_dsa_roadmap
 )
@@ -27,6 +32,20 @@ from app.services.interview_service import (
     generate_interview_questions
 )
 import os
+class StartInterviewRequest(BaseModel):
+    session_type: str = "technical"
+    company: str | None = None
+    role: str | None = None
+    difficulty: str = "medium"
+
+
+class ContinueInterviewRequest(BaseModel):
+    session_id: str
+    answer: str
+
+
+class EndInterviewRequest(BaseModel):
+    session_id: str
 class RoadmapRequest(
     BaseModel
 ):
@@ -255,3 +274,37 @@ def dsa_roadmap():
     return {
         "roadmap": roadmap
     }
+@app.post("/mock-interview/start")
+def start_interview(
+    data: StartInterviewRequest
+):
+
+    result = start_mock_interview(
+        session_type=data.session_type,
+        company=data.company,
+        role=data.role,
+        difficulty=data.difficulty
+    )
+
+    return result
+@app.post("/mock-interview/continue")
+def continue_interview_route(
+    data: ContinueInterviewRequest
+):
+
+    result = continue_interview(
+        session_id=data.session_id,
+        user_message=data.answer
+    )
+
+    return result
+@app.post("/mock-interview/end")
+def end_interview(
+    data: EndInterviewRequest
+):
+
+    result = end_interview_with_feedback(
+        data.session_id
+    )
+
+    return result

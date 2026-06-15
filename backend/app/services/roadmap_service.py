@@ -41,9 +41,6 @@ Practice Goal:
 Return only the roadmap.
 """
 
-    roadmap = ask_llama(
-        prompt,
-        model="phi3"
-    )
+    roadmap = ask_llama(prompt)
 
     return roadmap
