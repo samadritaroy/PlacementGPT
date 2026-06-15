@@ -1,8 +1,21 @@
+# Virtual Environment
 venv/
+.venv/
+
+# Environment Variables
 .env
+
+# Python Cache
 __pycache__/
 *.pyc
+
+# Frontend
 node_modules/
 .next/
+
+# Project Data
 uploads/
 vectorstore/
+
+# VS Code
+.vscode/
