@@ -1,0 +1,190 @@
+python
+java
+c
+c++
+c#
+go
+rust
+kotlin
+swift
+r
+matlab
+scala
+
+html
+css
+javascript
+typescript
+jquery
+bootstrap
+tailwind css
+
+react
+next.js
+angular
+vue.js
+svelte
+
+node.js
+express.js
+fastapi
+django
+flask
+spring
+spring boot
+asp.net
+
+sql
+mysql
+postgresql
+sqlite
+mongodb
+redis
+oracle database
+firebase
+supabase
+
+git
+github
+gitlab
+bitbucket
+
+linux
+ubuntu
+bash
+shell scripting
+powershell
+
+docker
+kubernetes
+terraform
+ansible
+jenkins
+github actions
+ci/cd
+
+aws
+azure
+gcp
+cloud computing
+
+machine learning
+deep learning
+artificial intelligence
+generative ai
+nlp
+computer vision
+reinforcement learning
+data mining
+predictive analytics
+
+tensorflow
+keras
+pytorch
+scikit-learn
+xgboost
+lightgbm
+
+numpy
+pandas
+matplotlib
+seaborn
+plotly
+
+power bi
+tableau
+excel
+data visualization
+
+data science
+data analytics
+business intelligence
+statistics
+
+langchain
+langgraph
+llamaindex
+rag
+vector databases
+faiss
+chromadb
+pinecone
+
+openai api
+ollama
+hugging face
+transformers
+
+iot
+embedded systems
+arduino
+raspberry pi
+mqtt
+
+blockchain
+solidity
+web3
+ethereum
+
+computer networks
+network security
+tcp/ip
+dns
+http
+https
+
+cybersecurity
+ethical hacking
+penetration testing
+cryptography
+
+operating systems
+computer architecture
+data structures
+algorithms
+object oriented programming
+
+oop
+dbms
+os
+cn
+dsa
+
+microservices
+rest api
+graphql
+
+agile
+scrum
+
+figma
+ui/ux design
+
+flutter
+react native
+android development
+ios development
+
+apache kafka
+rabbitmq
+
+hadoop
+spark
+airflow
+
+selenium
+playwright
+cypress
+
+unit testing
+integration testing
+pytest
+junit
+
+opencv
+streamlit
+gradio
+
+software engineering
+system design
+design patterns
