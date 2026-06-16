@@ -5,6 +5,22 @@ from pydantic import BaseModel
 from fastapi import FastAPI, UploadFile, File
 from app.services.resume_service import extract_skills
 from app.services.resume_analysis_service import analyze_resume
+from app.services.company_prep_service import (
+    get_company_list,
+    get_company_profile,
+    generate_prep_guide,
+    get_common_questions,
+    generate_mock_question
+)
+from app.services.dsa_service import (
+    generate_dsa_question,
+    get_dsa_hint,
+    get_dsa_solution,
+    evaluate_dsa_answer
+)
+from app.services.answer_evaluator_service import (
+    evaluate_answer
+)
 from app.services.mock_interview_service import (
     start_mock_interview,
     continue_interview,
@@ -32,18 +48,40 @@ from app.services.interview_service import (
     generate_interview_questions
 )
 import os
+class CompanyPrepRequest(BaseModel):
+    company: str
+    role: str = "Software Engineer"
+    experience: str = "fresher"
+    weeks_available: int = 8
+class CompanyMockQuestionRequest(BaseModel):
+    company: str
+    question_type: str
+    role: str = "Software Engineer"
+class DSAQuestionRequest(BaseModel):
+    topic: str
+    difficulty: str = "easy"
+class DSAHintRequest(BaseModel):
+    topic: str
+    difficulty: str
+    question_id: str
+class DSAEvaluationRequest(BaseModel):
+    question: str
+    answer: str
+class AnswerEvaluationRequest(
+    BaseModel
+):
+    question: str
+    answer: str
+    question_type: str = "technical"
+    company: str | None = None
 class StartInterviewRequest(BaseModel):
     session_type: str = "technical"
     company: str | None = None
     role: str | None = None
     difficulty: str = "medium"
-
-
 class ContinueInterviewRequest(BaseModel):
     session_id: str
     answer: str
-
-
 class EndInterviewRequest(BaseModel):
     session_id: str
 class RoadmapRequest(
@@ -308,3 +346,82 @@ def end_interview(
     )
 
     return result
+@app.post("/evaluate-answer")
+def evaluate_candidate_answer(
+    data: AnswerEvaluationRequest
+):
+
+    result = evaluate_answer(
+        question=data.question,
+        answer=data.answer,
+        question_type=data.question_type,
+        company=data.company
+    )
+
+    return result
+@app.post("/dsa/generate")
+def generate_question(
+    data: DSAQuestionRequest
+):
+    return generate_dsa_question(
+        topic=data.topic,
+        difficulty=data.difficulty
+    )
+@app.post("/dsa/hint")
+def get_hint(
+    data: DSAHintRequest
+):
+    return get_dsa_hint(
+        topic=data.topic,
+        difficulty=data.difficulty,
+        question_id=data.question_id
+    )
+@app.post("/dsa/solution")
+def get_solution(
+    data: DSAHintRequest
+):
+    return get_dsa_solution(
+        topic=data.topic,
+        difficulty=data.difficulty,
+        question_id=data.question_id
+    )
+@app.post("/dsa/evaluate")
+def evaluate_solution(
+    data: DSAEvaluationRequest
+):
+    return evaluate_dsa_answer(
+        question=data.question,
+        answer=data.answer
+    )
+@app.get("/company-prep/companies")
+def list_companies():
+    return get_company_list()
+@app.post("/company-prep")
+def company_prep(
+    data: CompanyPrepRequest
+):
+    return {
+        "company_profile": get_company_profile(
+            data.company
+        ),
+
+        "preparation_guide": generate_prep_guide(
+            company=data.company,
+            role=data.role,
+            experience=data.experience,
+            weeks_available=data.weeks_available
+        ),
+
+        "common_questions": get_common_questions(
+            data.company
+        )
+    }
+@app.post("/company-prep/mock-question")
+def company_mock_question(
+    data: CompanyMockQuestionRequest
+):
+    return generate_mock_question(
+        company=data.company,
+        question_type=data.question_type,
+        role=data.role
+    )
