@@ -47,7 +47,14 @@ from app.services.document_service import (
 from app.services.interview_service import (
     generate_interview_questions
 )
+from app.services.auth_service import (
+    signup_user,
+    login_user
+)
 import os
+class AuthRequest(BaseModel):
+    email: str
+    password: str
 class CompanyPrepRequest(BaseModel):
     company: str
     role: str = "Software Engineer"
@@ -425,3 +432,33 @@ def company_mock_question(
         question_type=data.question_type,
         role=data.role
     )
+@app.post("/auth/signup")
+def signup(
+    data: AuthRequest
+):
+    result = signup_user(
+        data.email,
+        data.password
+    )
+
+    return {
+        "message": "Signup successful",
+        "user": result.user.email if result.user else None
+    }
+@app.post("/auth/login")
+def login(
+    data: AuthRequest
+):
+    result = login_user(
+        data.email,
+        data.password
+    )
+
+    return {
+        "message": "Login successful",
+        "access_token": (
+            result.session.access_token
+            if result.session
+            else None
+        )
+    }

@@ -6,10 +6,15 @@ Company-specific prompts for Amazon, Google, TCS, Infosys, Wipro.
 """
 import logging
 from typing import Optional
-from app.services.chat_history_service import (
-    create_session,
-    add_message,
-    get_history,
+from app.services.chat_storage_service import (
+    create_chat_session,
+    add_chat_message,
+    get_chat_history
+)
+from app.services.chat_storage_service import (
+    create_chat_session,
+    add_chat_message,
+    get_chat_history,
     clear_session
 )
 from app.services.answer_evaluator_service import (
@@ -144,26 +149,35 @@ def start_mock_interview(
     Returns session_id + first question from AI interviewer.
     SAME SIGNATURE as your existing code — drop-in replacement.
     """
-    session_id = create_session(session_type=session_type, company=company)
-    system_prompt = _build_system_prompt(session_type, company, role, difficulty)
- 
+    session = create_chat_session(
+    user_id=None,
+    session_type=session_type,
+    company=company
+)
+    session_id = session["id"]
     # Store session config for use in evaluation later
     _session_scores[session_id] = []
     _session_config[session_id] = {
+        "user_id": "demo-user",
         "session_type": session_type,
         "company": company,
         "role": role,
         "difficulty": difficulty,
-    }
- 
+        }
+    system_prompt = _build_system_prompt(
+    session_type,
+    company,
+    role,
+    difficulty
+    )
     # Store system prompt in session
-    add_message(session_id, "system", system_prompt)
+    add_chat_message(session_id, "system", system_prompt)
  
     # Get opening message from AI
     messages = [{"role": "system", "content": system_prompt}]
     opening = ask_llm_with_history(messages, temperature=0.5, max_tokens=400)
  
-    add_message(session_id, "assistant", opening)
+    add_chat_message(session_id, "assistant", opening)
  
     return {
         "session_id":      session_id,
@@ -209,14 +223,14 @@ def continue_interview(session_id: str, user_message: str) -> dict:
         "question_number": 2              ← which question this was
     }
     """
-    history = get_history(session_id)
+    history = get_chat_history(session_id)
  
     # ── Step 1: Find the last question the AI asked ──────────
     # We evaluate user_message AGAINST this question
     last_question = _extract_last_ai_question(history)
  
     # ── Step 2: Add user answer to history ───────────────────
-    add_message(session_id, "user", user_message)
+    add_chat_message(session_id, "user", user_message)
  
     # ── Step 3: Evaluate the answer ──────────────────────────
     config = _session_config.get(session_id, {})
@@ -237,11 +251,11 @@ def continue_interview(session_id: str, user_message: str) -> dict:
     })
  
     # ── Step 5: Get next question from AI interviewer ────────
-    updated_history = get_history(session_id)
+    updated_history = get_chat_history(session_id)
     ai_response = ask_llm_with_history(
         updated_history, temperature=0.5, max_tokens=500
     )
-    add_message(session_id, "assistant", ai_response)
+    add_chat_message(session_id, "assistant", ai_response)
  
     # ── Step 6: Compute running averages ─────────────────────
     all_scores = _session_scores[session_id]
