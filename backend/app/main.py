@@ -1,3 +1,4 @@
+from fastapi.middleware.cors import CORSMiddleware
 from app.services.rag_service import create_chunks
 from app.services.rag_service import get_relevant_chunks
 from app.services.llm_service import ask_llama
@@ -113,6 +114,18 @@ class ATSRequest(
 UPLOAD_DIR = "uploads"
 
 os.makedirs(UPLOAD_DIR, exist_ok=True)
+app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/")
 def home():
